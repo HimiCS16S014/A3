@@ -1,0 +1,76 @@
+MODULE main
+
+VAR
+
+start: boolean;
+close: boolean;
+error: boolean;
+heat : boolean;
+
+move : {start_oven, open_door, close_door, done, cook, start_cooking, warmup, reset};
+
+
+
+
+
+
+ASSIGN
+
+init(error) := FALSE;
+
+
+
+next(error) :=
+case
+   (!start & !close & !heat & !error) & (move=start_oven)         : !error;
+   (start & close & !heat & error) & (move = reset)               : !error;
+   TRUE                                                           : error; 
+esac;
+
+
+
+ASSIGN
+init(start) :=FALSE;
+
+next(start) :=
+case
+   (!start & close & !heat & !error) & (move = start_oven)     : !start;
+   (!start & !close & !heat & !error) & (move = start_oven )   : !start;
+   (start & close & heat & !error) & (move = start_cooking)    : !start;
+   (start & close & !heat & error) & (move = reset )           : !start;
+   TRUE                                                        :  start;
+esac;
+
+
+ASSIGN
+init(heat) :=FALSE;
+
+next(heat) :=
+case
+   (!start & !close & !heat & !error) & (move = start_oven)    : !heat;
+   (start & !close & heat & error) & (move = close_door )      : !heat;
+   (start & close & !heat & error) & (move = open_door )       : !heat;
+   (start & close & !heat & !error) & (move = warmup)          : !heat;
+   (!start & close & heat & !error) & (move = done)            : !heat;
+   TRUE                                                        :  heat;
+esac;
+
+ASSIGN
+init(close) :=TRUE;
+
+next(close) :=
+case
+   (!start & close & !heat & !error) & (move = open_door)      : !close;
+   (start & !close & heat & error) & (move = close_door)       : !close;
+   (start & close & !heat & error) & (move = open_door)        : !close;
+   (!start & close & heat & !error) & (move = open_door)       : !close;
+   TRUE                                                        :  close;
+esac;  
+
+
+LTLSPEC 
+F(¬heat & ¬error)
+
+
+
+

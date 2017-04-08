@@ -1,0 +1,64 @@
+MODULE main
+   boat : {left_bank ,right_bank};
+   m_on_lb : {0,1,2,3};
+   c_on_lb : {0,1,2,3};
+   m_on_rb : {0,1,2,3};
+   c_on_rb : {0,1,2,3};
+
+ASSIGN
+   init(boat) :=left_bank;
+   init(m_on_lb) :=3;
+   init(c_on_lb) :=3;
+   init(m_on_rb) :=0;
+   init(c_on_rb) :=0;
+
+
+next(boat) :={left_bank ,right_bank};
+
+next(m_on_lb) :=
+   case
+      boat=left_bank & (m_on_lb=3 & c_on_lb=3) := m_on_lb;
+      boat=left_bank & (m_on_lb=3 & c_on_lb=2) := m_on_lb;
+      boat=left_bank & (m_on_lb=3 & c_on_lb=1) := m_on_lb-2;
+      boat=left_bank & (m_on_lb=2 & c_on_lb=2) := m_on_lb-2;
+      boat=left_bank & (m_on_lb=0 & c_on_lb=3) := m_on_lb;
+      boat=left_bank & (m_on_lb=0 & c_on_lb=3) := m_on_lb;
+      boat=left_bank & (m_on_lb=0 & c_on_lb=2) := m_on_lb;
+      TRUE                                     := m_on_lb;
+   esac;
+
+
+next(c_on_lb) :=
+   case
+      boat=left_bank & (m_on_lb=3 & c_on_lb=3) := c_on_lb-2;
+      boat=left_bank & (m_on_lb=3 & c_on_lb=2) := c_on_lb-2;
+      boat=left_bank & (m_on_lb=3 & c_on_lb=1) := c_on_lb;
+      boat=left_bank & (m_on_lb=2 & c_on_lb=2) := c_on_lb;
+      boat=left_bank & (m_on_lb=0 & c_on_lb=3) := c_on_lb-2;
+      boat=left_bank & (m_on_lb=0 & c_on_lb=2) := c_on_lb-2;
+      TRUE                                     := c_on_lb;
+   esac;
+
+next(m_on_rb) :=
+   case
+      boat=right_bank & (m_on_rb=0 & c_on_rb=2) := m_on_rb;
+      boat=right_bank & (m_on_rb=0 & c_on_rb=3) := m_on_rb;
+      boat=right_bank & (m_on_rb=2 & c_on_rb=2) := m_on_rb-1;
+      boat=right_bank & (m_on_rb=3 & c_on_rb=1) := m_on_rb;
+      boat=right_bank & (m_on_rb=3 & c_on_rb=2) := m_on_rb;
+      boat=right_bank & (m_on_rb=3 & c_on_rb=3) := m_on_rb;
+      TRUE                                      := m_on_rb;
+   esac;
+
+
+next(c_on_rb) :=
+   case
+      boat=right_bank & (m_on_rb=0 & c_on_rb=2) := c_on_rb-1;
+      boat=right_bank & (m_on_rb=0 & c_on_rb=3) := c_on_rb-1;
+      boat=right_bank & (m_on_rb=2 & c_on_rb=2) := c_on_rb-1;
+      boat=right_bank & (m_on_rb=3 & c_on_rb=1) := c_on_rb-1;
+      boat=right_bank & (m_on_rb=3 & c_on_rb=2) := c_on_rb-1;
+      boat=right_bank & (m_on_rb=3 & c_on_rb=3) := c_on_rb;
+      TRUE                                      := c_on_rb;
+   esac;
+

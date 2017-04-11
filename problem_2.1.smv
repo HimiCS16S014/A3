@@ -1,0 +1,108 @@
+MODULE main
+VAR
+   b_dir : {l_to_r ,r_to_l};
+   m_on_lb : 0..3;
+   c_on_lb : 0..3;
+   m_on_rb : 0..3;
+   c_on_rb : 0..3;
+   pair_on_boat : {cc,mm,cm,m,c};
+
+ASSIGN
+   init(b_dir)   :=l_to_r;
+   init(m_on_lb) :=3;
+   init(c_on_lb) :=3;
+   init(m_on_rb) :=0;
+   init(c_on_rb) :=0;
+
+
+next(b_dir) :=
+   case
+     b_dir = r_to_l : l_to_r;
+     b_dir =l_to_r : r_to_l;
+   esac;
+
+
+next(pair_on_boat) :=
+   case
+      m_on_lb = 0 & b_dir = l_to_r : {c,cc};
+      m_on_lb = 1 & b_dir = l_to_r : {c,cc,cm};
+      m_on_lb = 2 & b_dir = l_to_r : {c,cc,cm,mm};
+      m_on_lb = 3 & b_dir = l_to_r : {c,cc,cm,mm,m};
+      c_on_lb = 0 & b_dir = l_to_r : {m,mm};
+      c_on_lb = 1 & b_dir = l_to_r : {m,mm,cm};
+      c_on_lb = 2 & b_dir = l_to_r : {m,mm,cm,cc};
+      c_on_lb = 3 & b_dir = l_to_r : {c,cc,cm,mm,m};
+
+      m_on_rb = 0 & b_dir = r_to_l : {c,cc};
+      m_on_rb = 1 & b_dir = r_to_l : {c,cc,cm};
+      m_on_rb = 2 & b_dir = r_to_l : {c,cc,cm,mm};
+      m_on_rb = 3 & b_dir = r_to_l : {c,cc,cm,mm,m};
+      c_on_rb = 0 & b_dir = r_to_l : {m,mm};
+      c_on_rb = 1 & b_dir = r_to_l : {m,mm,cm};
+      c_on_rb = 2 & b_dir = r_to_l : {m,mm,cm,cc};
+      c_on_rb = 3 & b_dir = r_to_l : {c,cc,cm,m,mm};
+   esac;
+
+
+
+next(m_on_lb) :=
+   case
+      pair_on_boat = cc                : m_on_lb;
+      pair_on_boat = c                 : m_on_lb;
+      b_dir=l_to_r & pair_on_boat = mm & m_on_lb >1 : m_on_lb - 2;
+      b_dir=l_to_r & pair_on_boat = m  & m_on_lb >0 : m_on_lb - 1;
+      b_dir=l_to_r & pair_on_boat = cm & m_on_lb >0 : m_on_lb - 1;
+      b_dir=r_to_l & pair_on_boat = mm & m_on_lb <2 : m_on_lb + 2;
+      b_dir=r_to_l & pair_on_boat = m  & m_on_lb <3 : m_on_lb + 1;
+      b_dir=r_to_l & pair_on_boat = cm & m_on_lb <3 : m_on_lb + 1;
+      TRUE                             : m_on_lb;
+   esac;
+
+
+next(c_on_lb) :=
+   case
+      pair_on_boat = mm                : c_on_lb;
+      pair_on_boat = m                 : c_on_lb;
+      b_dir=l_to_r & pair_on_boat = cc & c_on_lb >1 : c_on_lb - 2;
+      b_dir=l_to_r & pair_on_boat = c  & c_on_lb >0 : c_on_lb - 1;
+      b_dir=l_to_r & pair_on_boat = cm & c_on_lb >0 : c_on_lb - 1;
+      b_dir=r_to_l & pair_on_boat = cc & c_on_lb <2 : c_on_lb + 2;
+      b_dir=r_to_l & pair_on_boat = c  & c_on_lb <3 : c_on_lb + 1;
+      b_dir=r_to_l & pair_on_boat = cm & c_on_lb <3 : c_on_lb + 1;
+      TRUE                             : c_on_lb;
+   esac;
+
+next(m_on_rb) :=
+   case
+      pair_on_boat =  cc               : m_on_rb;
+      pair_on_boat =  c                : m_on_rb;
+      b_dir=r_to_l & pair_on_boat = m  & m_on_rb >0 : m_on_rb - 1;
+      b_dir=r_to_l & pair_on_boat = cm & m_on_rb >0 : m_on_rb - 1;
+      b_dir=r_to_l & pair_on_boat = mm & m_on_rb >1 : m_on_rb - 2;
+      b_dir=l_to_r & pair_on_boat = m  & m_on_lb <3 : m_on_lb + 1;
+      b_dir=l_to_r & pair_on_boat = mm & m_on_lb <2 : m_on_lb + 2;
+      b_dir=l_to_r & pair_on_boat = cm & m_on_lb <3 : m_on_lb + 1;
+      TRUE                             : m_on_rb;
+   esac;
+
+
+next(c_on_rb) :=
+   case
+      pair_on_boat =  mm               : c_on_rb;
+      pair_on_boat =  m                : c_on_rb;
+      b_dir=r_to_l & pair_on_boat = c  & c_on_rb >0 : c_on_rb - 1;
+      b_dir=r_to_l & pair_on_boat = cm & c_on_rb >0 : c_on_rb - 1;
+      b_dir=r_to_l & pair_on_boat = cc & c_on_rb >1 : c_on_rb - 2;
+      b_dir=l_to_r & pair_on_boat = c  & c_on_lb <3 : c_on_lb + 1;
+      b_dir=l_to_r & pair_on_boat = cc & c_on_lb <2 : c_on_lb + 2;
+      b_dir=l_to_r & pair_on_boat = cm & c_on_lb <3 : c_on_lb + 1;
+      TRUE                             : c_on_rb;
+   esac;
+
+
+
+CTLSPEC !AG (m_on_rb < c_on_rb )
+        ! EF (m_on_rb = 3 & c_on_rb =3)
+
+
+

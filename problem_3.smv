@@ -1,0 +1,96 @@
+MODULE main
+	VAR
+		clr : array 0 .. 8 of { BLUE, RED, YELLOW};
+		rotation : {r_0, r_1, r_2, r_3};
+
+
+	ASSIGN
+		init(rotation) := {r_0, r_1, r_2, r_3};
+		next(rotation) := {r_0, r_1, r_2, r_3};
+
+
+		init(clr[0]) :=  BLUE;
+		init(clr[1]) :=  RED;
+		init(clr[2]) :=  YELLOW;
+		init(clr[3]) :=  RED;
+		init(clr[4]) :=  YELLOW;
+		init(clr[5]) :=  BLUE;
+		init(clr[6]) :=  YELLOW;
+		init(clr[7]) :=  BLUE;
+		init(clr[8]) :=  RED;
+
+
+		next(clr[0]) :=
+			case
+				rotation = r_0 : clr[3];
+				TRUE		   : clr[0];
+			esac;
+
+
+		next(clr[1]) :=
+			case
+				rotation = r_0 : clr[0];
+				rotation = r_1 : clr[4];
+				TRUE		   : clr[1];
+			esac;
+
+
+
+		next(clr[2]) :=
+			case
+				rotation = r_1 : clr[1];
+				TRUE		   : clr[2];
+			esac;
+
+
+		next(clr[3]) :=
+			case
+				rotation = r_0 : clr[4];
+				rotation = r_2 : clr[6];
+				TRUE		   : clr[3];
+			esac;
+
+
+		next(clr[4]) :=
+			case
+				rotation = r_0 : clr[1];
+				rotation = r_1 : clr[5];
+				rotation = r_2 : clr[3];
+				rotation = r_3 : clr[7];
+				TRUE		   : clr[4];
+			esac;
+
+
+		next(clr[5]) :=
+			case
+				rotation = r_1 : clr[2];
+				rotation = r_3 : clr[4];
+				TRUE		   : clr[5];
+			esac;
+
+		next(clr[6]) :=
+			case
+				rotation = r_2 : clr[7];
+				TRUE		   : clr[6];
+			esac;
+
+
+		next(clr[7]) :=
+			case
+				rotation = r_2 : clr[4];
+				rotation = r_3 : clr[8];
+				TRUE		   : clr[7];
+			esac;
+
+
+
+		next(clr[8]) :=
+			case
+				rotation = r_3 : clr[5];
+				TRUE		   : clr[8];
+			esac;
+
+
+
+
+CTLSPEC !EF (clr[0]= RED & clr[1]=RED  & clr[2]=RED  & clr[3]= YELLOW & clr[4]= YELLOW & clr[5]= YELLOW & clr[6] = BLUE & clr[7]= BLUE &clr[8]= BLUE )
